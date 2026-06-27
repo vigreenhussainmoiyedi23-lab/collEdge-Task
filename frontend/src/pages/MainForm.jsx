@@ -1,128 +1,220 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useMessage } from "../hook/useMessage";
+import { Plus, LogOut, Pencil, Trash2, X } from "lucide-react";
+
+const Header = ({ logoutHandler }) => (
+  <div className="flex items-center justify-between mb-8">
+    <div>
+      <h1 className="text-4xl font-bold text-slate-900">Task Kanban Board</h1>
+      <p className="text-slate-500 mt-2">
+        Create, manage and organize your daily tasks.
+      </p>
+    </div>
+
+    <button
+      onClick={logoutHandler}
+      className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl transition"
+    >
+      <LogOut size={18} />
+      Logout
+    </button>
+  </div>
+);
+
+const AddTaskModal = ({
+  open,
+  close,
+  formData,
+  setFormData,
+  submitHandler,
+}) => {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-5">
+      <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Create Task</h2>
+
+          <button onClick={close}>
+            <X />
+          </button>
+        </div>
+
+        <form onSubmit={submitHandler} className="space-y-5">
+          <div>
+            <label className="font-medium">Title</label>
+
+            <input
+              className="w-full mt-2 border rounded-xl p-3 outline-none"
+              placeholder="Task title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  title: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="font-medium">Description</label>
+
+            <textarea
+              rows="4"
+              className="w-full mt-2 border rounded-xl p-3 outline-none resize-none"
+              placeholder="Task description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  description: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="font-medium">Priority</label>
+
+            <select
+              className="w-full mt-2 border rounded-xl p-3"
+              value={formData.priority}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  priority: e.target.value,
+                })
+              }
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-3">
+            <button
+              type="button"
+              onClick={close}
+              className="px-5 py-2 rounded-xl bg-gray-200"
+            >
+              Cancel
+            </button>
+
+            <button className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white">
+              Create Task
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const TaskCard = ({ title, description, priority }) => (
+  <div className="bg-white rounded-xl shadow p-4 mb-4 border">
+    <h3 className="font-semibold text-lg">{title}</h3>
+
+    <p className="text-sm text-gray-500 mt-2">{description}</p>
+
+    <div className="flex justify-between items-center mt-4">
+      <span className="text-xs px-3 py-1 rounded-full bg-red-100 text-red-600">
+        {priority}
+      </span>
+
+      <div className="flex gap-2">
+        <button className="p-2 rounded hover:bg-gray-100">
+          <Pencil size={16} />
+        </button>
+
+        <button className="p-2 rounded hover:bg-gray-100 text-red-500">
+          <Trash2 size={16} />
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const Column = ({ title, color }) => (
+  <div className="rounded-2xl bg-white shadow-lg overflow-hidden">
+    <div className={`${color} px-5 py-4`}>
+      <h2 className="font-bold text-lg">{title}</h2>
+    </div>
+
+    <div className="p-5 min-h-[500px] bg-slate-50">
+      <TaskCard />
+      <TaskCard />
+    </div>
+  </div>
+);
+
+const KanbanBoard = () => (
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+    <Column title="To Do" color="bg-blue-100" />
+
+    <Column title="In Progress" color="bg-yellow-100" />
+
+    <Column title="Completed" color="bg-green-100" />
+  </div>
+);
 
 const MainForm = () => {
   const navigate = useNavigate();
   const { user, loading, logoutHandler } = useAuth();
-  const { sendMessage, loading: messageLoading } = useMessage();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    priority: "low",
+  });
+
   useEffect(() => {
     if (!loading && !user) {
       navigate("/login");
     }
   }, [loading, user, navigate]);
-  const [formData, setFormData] = useState({
-    title: user?.title,
-    description: user?.description,
-    priority: "low",
-  });
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        title: user.title,
-        description: user.description,
-      }));
-    }
-  }, [user]);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    console.log(formData);
+
+    setShowModal(false);
+
+    setFormData({
+      title: "",
+      description: "",
+      priority: "low",
+    });
+  };
 
   return (
-    <section className="min-h-screen bg-[#F8F4EC] flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-2xl bg-[#0F172A] rounded-3xl shadow-2xl p-8 md:p-12">
-        <div className="mb-8">
-          <div className="flex items-center justify-between ">
-            <h2 className="text-4xl font-bold text-[#F8F4EC] mb-3">
-              Get In Touch
-            </h2>{" "}
-            <button
-              onClick={logoutHandler}
-              className="bg-red-500 text-white font-bold rounded-full px-4 py-2 "
-            >
-              Logout{" "}
-            </button>
-          </div>
-          <p className="text-gray-300 text-lg">
-            Have a question, idea, or project in mind? Send us a message.
-          </p>
-        </div>
+    <section className="min-h-screen bg-[#F8F4EC] px-6 py-10">
+      <div className="max-w-7xl mx-auto">
+        <Header logoutHandler={logoutHandler} />
 
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            try {
-              await sendMessage(formData);
-              setFormData({
-                ...formData,
-                message: "",
-              });
-              alert("Message sent successfully");
-            } catch (error) {}
-          }}
-          className="space-y-6"
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl"
         >
-          {/* Name */}
-          <div>
-            <label className="block text-[#F8F4EC] mb-2 text-sm font-medium">
-              Name
-            </label>
+          <Plus size={18} />
+          Add Task
+        </button>
 
-            <input
-              type="text"
-              minLength={3}
-              value={formData?.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Enter your name"
-              className="w-full  text-gray-300 rounded-2xl border border-slate-700 bg-[#1E293B] px-5 py-4  placeholder:text-gray-400 outline-none focus:border-[#F8F4EC] transition-all duration-300"
-            />
-          </div>
+        <AddTaskModal
+          open={showModal}
+          close={() => setShowModal(false)}
+          formData={formData}
+          setFormData={setFormData}
+          submitHandler={submitHandler}
+        />
 
-          {/* description */}
-          <div>
-            <label className="block text-[#F8F4EC] mb-2 text-sm font-medium">
-              description
-            </label>
-
-            <input
-              type="email"
-              value={formData?.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Enter your description"
-              className="w-full rounded-2xl text-gray-300  border border-slate-700 bg-[#1E293B] px-5 py-4  placeholder:text-gray-400 outline-none focus:border-[#F8F4EC] transition-all duration-300"
-            />
-          </div>
-
-          {/* Message */}
-          <div>
-            <label className="block text-[#F8F4EC] mb-2 text-sm font-medium">
-              Message
-            </label>
-
-            <textarea
-              rows="5"
-              value={formData?.message}
-              minLength={5}
-              onChange={(e) =>
-                setFormData({ ...formData, message: e.target.value })
-              }
-              placeholder="Write your message..."
-              className="w-full rounded-2xl border border-slate-700 bg-[#1E293B] px-5 py-4 text-white placeholder:text-gray-400 outline-none focus:border-[#F8F4EC] transition-all duration-300 resize-none"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            style={{ cursor: messageLoading ? "not-allowed" : "pointer" }}
-            className="w-full rounded-2xl bg-[#F8F4EC] text-[#0F172A] py-4 text-lg font-semibold hover:scale-[1.02] transition-all duration-300"
-          >
-            Submit Message
-          </button>
-        </form>
+        <KanbanBoard />
       </div>
     </section>
   );
