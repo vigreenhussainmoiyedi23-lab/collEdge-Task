@@ -19,6 +19,11 @@ const taskSchema = new mongoose.Schema({
         enum: ["low", "medium", "high"],
         default: "low"
     },
+    status: {
+        type: String,
+        enum: ["toDo", "in-progress", "completed"],
+        default: "toDo" 
+    }
 })
 
 const taskModel = mongoose.model("task", taskSchema)
