@@ -4,13 +4,21 @@ import { Pencil, Trash2, X } from "lucide-react";
 import { useTask } from "../hook/useTask";
 import { useState } from "react";
 
-const TaskCard = ({ title, description, priority, _id, coloumn,index }) => {
+const TaskCard = ({ task, coloumn, index }) => {
   const [isEdit, setIsEdit] = useState(false);
+  const { title, description, priority } = task;
   const [taskDets, setTaskDets] = useState({ title, description, priority });
-  const { updateTaskHandler, deleteTaskHandler } = useTask();
+  const { updateTaskHandler, deleteTaskHandler, onDragHandler } = useTask();
 
   return (
-    <div draggable onDrag={(e) => e.preventDefault()} className="bg-white rounded-xl shadow p-4 mb-4 border">
+    <div
+      draggable
+      onDragStart={(e) => {
+        console.log("drag start");
+        onDragHandler(task);
+      }}
+      className="bg-white rounded-xl shadow p-4 mb-4 border"
+    >
       {isEdit ? (
         <input
           type="text"

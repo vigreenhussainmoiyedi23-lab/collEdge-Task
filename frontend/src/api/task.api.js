@@ -16,6 +16,7 @@ async function createTaskAPI({ title, description, priority }) {
 
 async function getAllTasks() {
     try {
+
         const response = await api.get("/");
         return response.data;
     } catch (error) {
@@ -30,8 +31,10 @@ async function updateTask(id, { title, description, priority }) {
         throw error;
     }
 }
-async function updateTaskStatus(id, status) {
+async function updateTaskStatusApi(id, status) {
     try {
+        console.log("Updating task apii status for task ID:", id, "to status:", status);
+
         const response = await api.patch(`/${id}/${status}`);
         return response.data;
     } catch (error) {
@@ -46,4 +49,4 @@ async function deleteTask(id) {
         throw error;
     }
 }
-export { createTaskAPI, getAllTasks, updateTask, updateTaskStatus, deleteTask };
+export { createTaskAPI, getAllTasks, updateTask, updateTaskStatusApi, deleteTask };

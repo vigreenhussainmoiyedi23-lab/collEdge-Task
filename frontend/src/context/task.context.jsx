@@ -5,6 +5,7 @@ export const TaskContext = createContext();
 const TaskContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [allTasks, setAllTasks] = useState([]);
+  const [activeTask, setActiveTask] = useState(null);
   return (
     <TaskContext.Provider
       value={{
@@ -12,6 +13,8 @@ const TaskContextProvider = ({ children }) => {
         setLoading,
         allTasks,
         setAllTasks,
+        activeTask,
+        setActiveTask,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const taskModel = require("../models/task.model");
-const {  taskValidator } = require("../validators/message.validator");
+const { taskValidator } = require("../validators/message.validator");
 
 const router = Router()
 
@@ -12,7 +12,7 @@ router.get("/", isAuthenticated, async (req, res) => {
             acc[val.status] = acc[val.status] || []
             acc[val.status].push(val)
             return acc
-        }, {})
+        }, { toDo: [], inProgress: [], completed: [] })
         return res.status(200).json({ tasks })
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" })
@@ -44,6 +44,8 @@ router.put("/:id", taskValidator, isAuthenticated, async (req, res) => {
 router.patch("/:id/:status", isAuthenticated, async (req, res) => {
     try {
         const { status } = req.params
+        console.log("Updating task status for task ID:", req.params.id, "to status:", status);
+
         const validStatuses = ["toDo", "inProgress", "completed"]
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status" })
