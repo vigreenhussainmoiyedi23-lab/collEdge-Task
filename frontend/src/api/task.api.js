@@ -7,7 +7,7 @@ const api = axios.create({
 
 async function createTaskAPI({ title, description, priority }) {
     try {
-        const response = await api.post("/", { title, description, priorityq });
+        const response = await api.post("/", { title, description, priority });
         return response.data;
     } catch (error) {
         throw error;

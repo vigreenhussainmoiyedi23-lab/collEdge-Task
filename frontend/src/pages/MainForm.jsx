@@ -3,6 +3,7 @@ import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Plus, LogOut, Pencil, Trash2, X } from "lucide-react";
 import { useTask } from "../hook/useTask";
+import KanbanBoard from "../components/KanbanBoard";
 
 const Header = ({ logoutHandler }) => (
   <div className="flex items-center justify-between mb-8">
@@ -115,52 +116,7 @@ const AddTaskModal = ({
   );
 };
 
-const TaskCard = ({ title, description, priority }) => (
-  <div className="bg-white rounded-xl shadow p-4 mb-4 border">
-    <h3 className="font-semibold text-lg">{title}</h3>
 
-    <p className="text-sm text-gray-500 mt-2">{description}</p>
-
-    <div className="flex justify-between items-center mt-4">
-      <span className="text-xs px-3 py-1 rounded-full bg-red-100 text-red-600">
-        {priority}
-      </span>
-
-      <div className="flex gap-2">
-        <button className="p-2 rounded hover:bg-gray-100">
-          <Pencil size={16} />
-        </button>
-
-        <button className="p-2 rounded hover:bg-gray-100 text-red-500">
-          <Trash2 size={16} />
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
-const Column = ({ title, color }) => (
-  <div className="rounded-2xl bg-white shadow-lg overflow-hidden">
-    <div className={`${color} px-5 py-4`}>
-      <h2 className="font-bold text-lg">{title}</h2>
-    </div>
-
-    <div className="p-5 min-h-[500px] bg-slate-50">
-      <TaskCard />
-      <TaskCard />
-    </div>
-  </div>
-);
-
-const KanbanBoard = () => (
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-    <Column title="To Do" color="bg-blue-100" />
-
-    <Column title="In Progress" color="bg-yellow-100" />
-
-    <Column title="Completed" color="bg-green-100" />
-  </div>
-);
 
 const MainForm = () => {
   const navigate = useNavigate();

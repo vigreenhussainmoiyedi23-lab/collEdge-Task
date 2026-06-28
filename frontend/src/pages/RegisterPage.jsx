@@ -16,12 +16,11 @@ const RegisterPage = () => {
         {/* Left Side */}
         <div className="hidden md:flex flex-col justify-center p-12 bg-[#111C33]">
           <h1 className="text-5xl font-bold leading-tight text-[#F8F4EC]">
-            Join SHE CAN FOUNDATION
+            Welcome To TASK TRACKER
           </h1>
 
           <p className="text-gray-300 mt-6 text-lg leading-relaxed">
-            Become a part of a community focused on empowerment, education,
-            support, and creating opportunities that make a real difference.
+            Register to create and manage your Tasks using modern Kanban Board.
           </p>
 
           <div className="mt-10 h-[2px] w-24 bg-[#F8F4EC]" />

@@ -19,8 +19,7 @@ const LoginPage = () => {
           </h1>
 
           <p className="text-gray-300 mt-6 text-lg leading-relaxed">
-            Continue supporting initiatives focused on empowerment, education,
-            community growth, and creating meaningful impact.
+            Login to your account to create and manage your Tasks
           </p>
 
           <div className="mt-10 h-[2px] w-24 bg-[#F8F4EC]" />
@@ -81,7 +80,7 @@ const LoginPage = () => {
             </div>
             {errorMessage && (
               <p className="text-red-500 font-semibold italic">
-                ⚠️ {errorMessage  }
+                ⚠️ {errorMessage}
               </p>
             )}
             {/* Button */}

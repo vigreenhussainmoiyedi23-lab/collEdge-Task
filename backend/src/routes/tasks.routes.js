@@ -1,24 +1,30 @@
 const { Router } = require("express");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const taskModel = require("../models/task.model");
-const { messageValidator, taskValidator } = require("../validators/message.validator");
-const validate = require("../validators/validate");
+const {  taskValidator } = require("../validators/message.validator");
 
 const router = Router()
 
 router.get("/", isAuthenticated, async (req, res) => {
     try {
-        const tasks = await taskModel.find({ user: req.user._id })
+        const Alltasks = await taskModel.find({ user: req.user._id })
+        const tasks = Alltasks.reduce((acc, val) => {
+            acc[val.status] = acc[val.status] || []
+            acc[val.status].push(val)
+            return acc
+        }, {})
         return res.status(200).json({ tasks })
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" })
     }
 })
 
+
 router.post("/", taskValidator, isAuthenticated, async (req, res) => {
     try {
         const { title, description, priority } = req.body
         const newTask = await taskModel.create({ title, description, priority, user: req.user._id })
+        getAllTasks()
         return res.status(201).json({ newTask, message: "Task created successfully" })
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" })
@@ -38,7 +44,7 @@ router.put("/:id", taskValidator, isAuthenticated, async (req, res) => {
 router.patch("/:id/:status", isAuthenticated, async (req, res) => {
     try {
         const { status } = req.params
-        const validStatuses = ["toDo", "in-progress", "completed"]
+        const validStatuses = ["toDo", "inProgress", "completed"]
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status" })
         }
@@ -48,5 +54,15 @@ router.patch("/:id/:status", isAuthenticated, async (req, res) => {
         return res.status(500).json({ message: "Internal server error" })
     }
 })
-
+router.delete("/:id", isAuthenticated, async (req, res) => {
+    try {
+        const task = await taskModel.findOneAndDelete({ _id: req.params.id, user: req.user._id })
+        if (!task) {
+            return res.status(404).json({ message: "Task not found or Unauthorized" })
+        }
+        return res.status(200).json({ task, message: "Task deleted successfully" })
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
+})
 module.exports = router
