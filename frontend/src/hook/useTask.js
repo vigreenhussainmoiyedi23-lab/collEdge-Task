@@ -17,8 +17,7 @@ export const useTask = () => {
         try {
             const response = await createTaskAPI(data)
             if (response) {
-                setAllTasks([...allTasks, response])
-                navigate("/admin")
+                await fetchTasks()
             }
         } catch (error) {
             console.error("Send message error:", error);
