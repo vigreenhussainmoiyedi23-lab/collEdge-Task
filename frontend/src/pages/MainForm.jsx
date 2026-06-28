@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Plus, LogOut, Pencil, Trash2, X } from "lucide-react";
+import { useTask } from "../hook/useTask";
 
 const Header = ({ logoutHandler }) => (
   <div className="flex items-center justify-between mb-8">
@@ -30,7 +31,7 @@ const AddTaskModal = ({
   submitHandler,
 }) => {
   if (!open) return null;
-
+  const { loading } = useTask();
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-5">
       <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl">
@@ -105,7 +106,7 @@ const AddTaskModal = ({
             </button>
 
             <button className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white">
-              Create Task
+              {loading ? "Creating..." : "Create Task"}
             </button>
           </div>
         </form>
@@ -163,6 +164,7 @@ const KanbanBoard = () => (
 
 const MainForm = () => {
   const navigate = useNavigate();
+  const { createTask } = useTask();
   const { user, loading, logoutHandler } = useAuth();
 
   const [showModal, setShowModal] = useState(false);
@@ -179,11 +181,9 @@ const MainForm = () => {
     }
   }, [loading, user, navigate]);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-
-    console.log(formData);
-
+    await createTask(formData);
     setShowModal(false);
 
     setFormData({

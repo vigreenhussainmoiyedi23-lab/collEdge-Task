@@ -1,8 +1,8 @@
 import React from "react";
-import { useMessage } from "../hook/useMessage";
+import { useTask } from "../hook/useTask";
 
 const AdminDashBoard = () => {
-  const { allMessages } = useMessage();
+  const { AllTasks } = useTask();
 
   return (
     <section className="min-h-screen bg-[#F8F4EC] p-6 md:p-10">
@@ -20,8 +20,8 @@ const AdminDashBoard = () => {
 
       {/* Messages List */}
       <div className="space-y-6">
-        {allMessages?.length > 0 ? (
-          allMessages.map((message) => (
+        {AllTasks?.length > 0 ? (
+          AllTasks.map((message) => (
             <div
               key={message._id}
               className="bg-[#0F172A] rounded-3xl p-6 shadow-xl border border-slate-800"
